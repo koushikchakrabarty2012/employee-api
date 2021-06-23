@@ -6,16 +6,22 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/julienschmidt/httprouter"
+	"github.com/gorilla/mux"
 )
 
-// Updates the Employee with some ID
-func UpdateSingleEmp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+// swagger:route PUT /emps/{id} employees updateEmployee
+// Update a employee details
+//
+// responses:
+//	200: employeeResponse
+
+// Update handles PUT requests to update employee
+func UpdateSingleEmp(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	key := ps.ByName("id")
+	vars := mux.Vars(r)
 	var tempEmp data.Employee
 	for index, item := range data.Emps {
-		if strconv.Itoa(item.ID) == key {
+		if strconv.Itoa(item.ID) == vars["id"] {
 			_ = json.NewDecoder(r.Body).Decode(&tempEmp)
 			tempEmp.ID = index
 			data.Emps[index] = tempEmp

@@ -5,12 +5,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	"github.com/julienschmidt/httprouter"
 )
 
-//return all employees who are managers
-func ReturnAllMgrs(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+// swagger:route GET /mgrs employees listManagers
+// Return a list of employees who are managers from the database
+// responses:
+//	200: managersResponse
+
+// ReturnAllMgrs handles GET requests and returns all current employees who are managers
+func ReturnAllMgrs(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Println("Endpoint Hit: returnAllMgrs")
 	var mgrs []data.Employee

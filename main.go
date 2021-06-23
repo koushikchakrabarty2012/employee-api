@@ -5,16 +5,21 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/julienschmidt/httprouter"
-
 	"employee-api/data"
 	"employee-api/handlers"
+
+	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/gorilla/mux"
 )
 
 func main() {
 	//Init router
-	myRouter := httprouter.New()
-
+	myRouter := mux.NewRouter()
+	getRouter := myRouter.Methods(http.MethodGet).Subrouter()
+	putRouter := myRouter.Methods(http.MethodPut).Subrouter()
+	postRouter := myRouter.Methods(http.MethodPost).Subrouter()
+	deleteRouter := myRouter.Methods(http.MethodDelete).Subrouter()
 	//generate mock data
 	data.Emps = append(data.Emps, data.Employee{ID: data.Count, FirstName: "firstname0", LastName: "lastname0", Manager: true, Address: &data.Address{City: "city0", State: "state0", Pin: "pin0"}})
 	data.Count++
@@ -23,12 +28,21 @@ func main() {
 	fmt.Printf("%+v", data.Emps)
 
 	//Route Handler Endpoints
-	myRouter.GET("/", handlers.HomePage)
-	myRouter.GET("/emps", handlers.ReturnAllEmps)
-	myRouter.GET("/emps/:id", handlers.ReturnSingleEmp)
-	myRouter.POST("/emps", handlers.CreateSingleEmp)
-	myRouter.PUT("/emps/:id", handlers.UpdateSingleEmp)
-	myRouter.DELETE("/emps/:id", handlers.DeleteSingleEmp)
-	myRouter.GET("/mgrs", handlers.ReturnAllMgrs)
+	//getRouter.GET("/", handlers.HomePage)
+	getRouter.HandleFunc("/emps", handlers.ReturnAllEmps)
+	getRouter.HandleFunc("/emps/{id}", handlers.ReturnSingleEmp)
+	postRouter.HandleFunc("/emps", handlers.CreateSingleEmp)
+	putRouter.HandleFunc("/emps/{id}", handlers.UpdateSingleEmp)
+	deleteRouter.HandleFunc("/emps/{id}", handlers.DeleteSingleEmp)
+	getRouter.HandleFunc("/mgrs", handlers.ReturnAllMgrs)
+
+	//handler for documentation
+	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
+	sh := middleware.Redoc(opts, nil)
+	getRouter.Handle("/docs", sh)
+	getRouter.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
+	//starting server
 	log.Fatal(http.ListenAndServe(":8081", myRouter))
+	fmt.Println("Starting server on PORT:8081")
+
 }

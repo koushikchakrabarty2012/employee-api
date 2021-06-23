@@ -6,16 +6,22 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/julienschmidt/httprouter"
+	"github.com/gorilla/mux"
 )
 
-// Deletes the Employee with some ID
-func DeleteSingleEmp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+// swagger:route DELETE /emps/{id} employees deleteEmployee
+// Delete a employee details
+//
+// responses:
+//	200: employeeResponse
+
+// Delete handles DELETE requests and removes employee from the database
+func DeleteSingleEmp(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	key := ps.ByName("id")
+	vars := mux.Vars(r)
 	var tempEmp data.Employee
 	for index, item := range data.Emps {
-		if strconv.Itoa(item.ID) == key {
+		if strconv.Itoa(item.ID) == vars["id"] {
 			tempEmp = data.Emps[index]
 			data.Emps = append(data.Emps[:index], data.Emps[index+1:]...)
 			_ = json.NewEncoder(w).Encode(tempEmp)
