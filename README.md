@@ -8,7 +8,21 @@ Step1 :This is a simple rest api with a set of Employee Data and having differen
   -Another operation is GetAllManagers which returns all managers from system which has certain employee set .
 
 Step2:Swagger 2.0 OpenApi Specification added on top of it .
-        
+
+    Swagger documentation is generated from the code annotations inside the source using go-swagger.
+
+    Go swagger installed with the following command:
+
+    go get -u github.com/go-swagger/go-swagger/cmd/swagger
+
+    Generate the documentation using the command:
+
+    swagger generate spec -o ./swagger.yaml --scan-models
+
+    After running the application:
+
+    go run main.go
+
       
 
 
