@@ -23,7 +23,7 @@ Step2:Swagger 2.0 OpenApi Specification added on top of it .
 
     go run main.go
 
-      
+Swagger documentation can be viewed using the ReDoc UI in your browser at http://localhost:port/docs.
 
 
 Step3:Dockerised the application as an image.
