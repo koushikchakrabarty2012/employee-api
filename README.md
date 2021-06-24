@@ -8,13 +8,14 @@ Step1 :This is a simple rest api with a set of Employee Data and having differen
   -Another operation is GetAllManagers which returns all managers from system which has certain employee set .
 
 Step2:Swagger 2.0 OpenApi Specification added on top of it .
-    1.import github.com/go-openapi/runtime/middleware in main.go and add handler for swagger which will start a file server for serving swagger.yaml 
+    1.Visit https://goswagger.io/generate/spec.html for generating specification from source
+    2.import github.com/go-openapi/runtime/middleware in main.go and add handler for swagger which will start a file server for serving swagger.yaml 
     //handler for documentation
       ops := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
       sh := middleware.Redoc(ops, nil)
       getRouter.Handle("/docs", sh)
       getRouter.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
-    2. Swagger documentation is generated from the code annotations inside the source using go-swagger.
+    3. Swagger documentation is generated from the code annotations inside the source using go-swagger.
 
     Go swagger installed with the following command:
 
