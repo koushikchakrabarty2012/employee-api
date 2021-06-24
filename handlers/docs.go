@@ -1,4 +1,4 @@
-// Package classification of Employee API
+// Package classification Employee API
 //
 // Documentation for Employee API
 //
@@ -21,6 +21,14 @@ import "employee-api/data"
 // NOTE: Types defined here are purely for documentation purposes
 // these types are not used by any of the handers
 
+// Generic error message returned as a string
+// swagger:response errorResponse
+type errorResponseWrapper struct {
+	// Description of the error
+	// in: body
+	Body data.GenericError
+}
+
 // A list of employees
 // swagger:response employeesResponse
 type employeesResponseWrapper struct {
@@ -35,6 +43,14 @@ type managersResponseWrapper struct {
 	// All current managers
 	// in: body
 	Body []data.Employee
+}
+
+// Data structure representing a single employee
+// swagger:response employeeResponse
+type employeeResponseWrapper struct {
+	// Newly created product
+	// in: body
+	Body data.Employee
 }
 
 // swagger:parameters updateEmployee createEmployee

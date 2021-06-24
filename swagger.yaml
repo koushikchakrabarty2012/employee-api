@@ -28,7 +28,9 @@ definitions:
         type: string
         x-go-name: LastName
       id:
+        description: the id for the employee
         format: int64
+        minimum: 1
         type: integer
         x-go-name: ID
       isManager:
@@ -36,9 +38,17 @@ definitions:
         x-go-name: Manager
     type: object
     x-go-package: employee-api/data
+  GenericError:
+    description: GenericError is a generic error message returned by a server
+    properties:
+      message:
+        type: string
+        x-go-name: Message
+    type: object
+    x-go-package: employee-api/data
 info:
   description: Documentation for Employee API
-  title: of Employee API
+  title: Employee API
   version: 1.0.0
 paths:
   /emps:
@@ -98,6 +108,8 @@ paths:
       responses:
         "200":
           $ref: '#/responses/employeeResponse'
+        "404":
+          $ref: '#/responses/errorResponse'
       tags:
       - employees
     put:
@@ -129,12 +141,20 @@ paths:
 produces:
 - application/json
 responses:
+  employeeResponse:
+    description: Data structure representing a single employee
+    schema:
+      $ref: '#/definitions/Employee'
   employeesResponse:
     description: A list of employees
     schema:
       items:
         $ref: '#/definitions/Employee'
       type: array
+  errorResponse:
+    description: Generic error message returned as a string
+    schema:
+      $ref: '#/definitions/GenericError'
   managersResponse:
     description: A list of managers
     schema:

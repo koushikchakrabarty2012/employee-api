@@ -42,7 +42,6 @@ func main() {
 	getRouter.Handle("/docs", sh)
 	getRouter.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
 	//starting server
+	log.Println("Starting server on PORT:8081")
 	log.Fatal(http.ListenAndServe(":8081", myRouter))
-	fmt.Println("Starting server on PORT:8081")
-
 }
