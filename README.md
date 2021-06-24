@@ -37,7 +37,7 @@ Step3:Dockerised the application as an image.
             1.docker build -t employee-api:1 .
             2.docker run -p 9090:8081 employee-api
                   rule:docker run -p <local-machine-port>:<container port> imageid/name
-                       docker run -d -p 9090:8080 healthplanner-api => detached mode
+                       docker run -d -p 9090:8080 employee-api => detached mode
             3. docker login
             4. docker tag employee-api:1 thisisjgec06/employee-api:1
                   rule: docker tag SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]
