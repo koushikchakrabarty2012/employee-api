@@ -3,6 +3,7 @@ package handlers
 import (
 	"employee-api/data"
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"cloud.google.com/go/logging"
@@ -15,6 +16,7 @@ import (
 //	404: errorResponse
 // ReturnSingleEmp handles GET requests
 func (e *Employees) ReturnSingleEmp(w http.ResponseWriter, r *http.Request) {
+	log.Println("The logger is:", e.l)
 	e.l.StandardLogger(logging.Info).Println("Endpoint Hit: returnSingleEmp")
 	w.Header().Set("Content-Type", "application/json")
 	id := getEmployeeID(r)

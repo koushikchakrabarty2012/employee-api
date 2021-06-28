@@ -28,9 +28,9 @@ func main() {
 	}
 	defer client.Close()
 	logName := "employee-api-log"
-
+	l := client.Logger(logName)
 	// create the handlers
-	eh := handlers.NewEmployees(client.Logger(logName))
+	eh := handlers.NewEmployees(l)
 	//Init router
 	myRouter := mux.NewRouter()
 	getRouter := myRouter.Methods(http.MethodGet).Subrouter()
@@ -59,6 +59,6 @@ func main() {
 	getRouter.Handle("/docs", sh)
 	getRouter.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
 	//starting server
-	client.Logger(logName).StandardLogger(logging.Info).Println("Starting server on PORT:8081")
-	client.Logger(logName).StandardLogger(logging.Error).Fatal(http.ListenAndServe(":8081", myRouter))
+	l.StandardLogger(logging.Info).Println("Starting server on PORT:8081")
+	l.StandardLogger(logging.Error).Fatal(http.ListenAndServe(":8081", myRouter))
 }
