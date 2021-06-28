@@ -13,7 +13,7 @@ import (
 //	200: employeeResponse
 
 // Create handles POST requests to add new employees
-func CreateSingleEmp(w http.ResponseWriter, r *http.Request) {
+func (e *Employees) CreateSingleEmp(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var employee data.Employee
 	_ = json.NewDecoder(r.Body).Decode(&employee)

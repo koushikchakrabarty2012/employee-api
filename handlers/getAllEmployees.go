@@ -3,8 +3,9 @@ package handlers
 import (
 	"employee-api/data"
 	"encoding/json"
-	"fmt"
 	"net/http"
+
+	"cloud.google.com/go/logging"
 )
 
 // swagger:route GET /emps employees listEmployees
@@ -13,10 +14,10 @@ import (
 //	200: employeesResponse
 
 // ReturnAllEmps handles GET requests and returns all current employees
-func ReturnAllEmps(w http.ResponseWriter, r *http.Request) {
+func (e *Employees) ReturnAllEmps(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Println("Endpoint Hit: returnAllEmps")
-	fmt.Println(data.Emps)
+	e.l.StandardLogger(logging.Info).Println("Endpoint Hit: returnAllEmps")
+	e.l.StandardLogger(logging.Debug).Println(data.Emps)
 	json.NewEncoder(w).Encode(data.Emps)
 
 }

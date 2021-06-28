@@ -6,7 +6,7 @@ import (
 )
 
 //HomePage
-func HomePage(w http.ResponseWriter, r *http.Request) {
+func (e *Employees) HomePage(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "Welcome to the HomePage!\n")
 	fmt.Println("Endpoint Hit: homePage")
 }

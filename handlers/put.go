@@ -16,7 +16,7 @@ import (
 //	200: employeeResponse
 
 // Update handles PUT requests to update employee
-func UpdateSingleEmp(w http.ResponseWriter, r *http.Request) {
+func (e *Employees) UpdateSingleEmp(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
 	var tempEmp data.Employee

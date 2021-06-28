@@ -5,15 +5,32 @@ import (
 	"log"
 	"net/http"
 
+	"context"
 	"employee-api/data"
 	"employee-api/handlers"
 
+	"cloud.google.com/go/logging"
 	"github.com/go-openapi/runtime/middleware"
 
 	"github.com/gorilla/mux"
 )
 
 func main() {
+	ctx := context.Background()
+
+	// Sets your Google Cloud Platform project ID.
+	projectID := "ingka-fulfilment-ordermgt-dev"
+
+	// Creates a client.
+	client, err := logging.NewClient(ctx, projectID)
+	if err != nil {
+		log.Fatalf("Failed to create client: %v", err)
+	}
+	defer client.Close()
+	logName := "employee-api-log"
+
+	// create the handlers
+	eh := handlers.NewEmployees(client.Logger(logName))
 	//Init router
 	myRouter := mux.NewRouter()
 	getRouter := myRouter.Methods(http.MethodGet).Subrouter()
@@ -29,12 +46,12 @@ func main() {
 
 	//Route Handler Endpoints
 	//getRouter.GET("/", handlers.HomePage)
-	getRouter.HandleFunc("/emps", handlers.ReturnAllEmps)
-	getRouter.HandleFunc("/emps/{id}", handlers.ReturnSingleEmp)
-	postRouter.HandleFunc("/emps", handlers.CreateSingleEmp)
-	putRouter.HandleFunc("/emps/{id}", handlers.UpdateSingleEmp)
-	deleteRouter.HandleFunc("/emps/{id}", handlers.DeleteSingleEmp)
-	getRouter.HandleFunc("/mgrs", handlers.ReturnAllMgrs)
+	getRouter.HandleFunc("/emps", eh.ReturnAllEmps)
+	getRouter.HandleFunc("/emps/{id}", eh.ReturnSingleEmp)
+	postRouter.HandleFunc("/emps", eh.CreateSingleEmp)
+	putRouter.HandleFunc("/emps/{id}", eh.UpdateSingleEmp)
+	deleteRouter.HandleFunc("/emps/{id}", eh.DeleteSingleEmp)
+	getRouter.HandleFunc("/mgrs", eh.ReturnAllMgrs)
 
 	//handler for documentation
 	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
@@ -42,7 +59,6 @@ func main() {
 	getRouter.Handle("/docs", sh)
 	getRouter.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
 	//starting server
-	log.Fatal(http.ListenAndServe(":8081", myRouter))
-	fmt.Println("Starting server on PORT:8081")
-
+	client.Logger(logName).StandardLogger(logging.Info).Println("Starting server on PORT:8081")
+	client.Logger(logName).StandardLogger(logging.Error).Fatal(http.ListenAndServe(":8081", myRouter))
 }
