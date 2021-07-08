@@ -1,48 +1,52 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
-
-	"employee-api/data"
-	"employee-api/handlers"
-
-	"github.com/go-openapi/runtime/middleware"
-
-	"github.com/gorilla/mux"
 )
 
+// Address defines the structure for an  employee address
+
+type Address struct {
+	City  string `json:"residingCity"`
+	State string `json:"stateCode"`
+	Pin   string `json:"pinCode"`
+}
+
+// Employee defines the structure for an  employee
+
+type Employee struct {
+	ID        int    `json:"id"`
+	FirstName string `json:"empFirstName"`
+	LastName  string `json:"empLastName"`
+	Manager   bool   `json:"isManager"`
+	Address   *Address
+}
+
+//Emps defines slice of employees
+var Emps []Employee
+
 func main() {
-	//Init router
-	myRouter := mux.NewRouter()
-	getRouter := myRouter.Methods(http.MethodGet).Subrouter()
-	putRouter := myRouter.Methods(http.MethodPut).Subrouter()
-	postRouter := myRouter.Methods(http.MethodPost).Subrouter()
-	deleteRouter := myRouter.Methods(http.MethodDelete).Subrouter()
-	//generate mock data
-	data.Emps = append(data.Emps, data.Employee{ID: data.Count, FirstName: "firstname0", LastName: "lastname0", Manager: true, Address: &data.Address{City: "city0", State: "state0", Pin: "pin0"}})
-	data.Count++
-	data.Emps = append(data.Emps, data.Employee{ID: data.Count, FirstName: "firstname1", LastName: "lastname1", Manager: false, Address: &data.Address{City: "city1", State: "state1", Pin: "pin1"}})
-	data.Count++
-	fmt.Printf("%+v", data.Emps)
+	getAllEmployees()
+}
 
-	//Route Handler Endpoints
-	//getRouter.GET("/", handlers.HomePage)
-	getRouter.HandleFunc("/emps", handlers.ReturnAllEmps)
-	getRouter.HandleFunc("/emps/{id}", handlers.ReturnSingleEmp)
-	postRouter.HandleFunc("/emps", handlers.CreateSingleEmp)
-	putRouter.HandleFunc("/emps/{id}", handlers.UpdateSingleEmp)
-	deleteRouter.HandleFunc("/emps/{id}", handlers.DeleteSingleEmp)
-	getRouter.HandleFunc("/mgrs", handlers.ReturnAllMgrs)
+func getAllEmployees() {
+	fmt.Println("Printing all employees which are present")
+	resp, err := http.Get("https://employee-api-sjcc6yr6ma-ew.a.run.app/emps")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer resp.Body.Close()
+	bodyBytes, _ := ioutil.ReadAll(resp.Body)
 
-	//handler for documentation
-	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
-	sh := middleware.Redoc(opts, nil)
-	getRouter.Handle("/docs", sh)
-	getRouter.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
-	//starting server
-	log.Fatal(http.ListenAndServe(":8081", myRouter))
-	fmt.Println("Starting server on PORT:8081")
+	// Convert response body to string
+	bodyString := string(bodyBytes)
+	fmt.Println("API Response as String:\n" + bodyString)
+
+	json.Unmarshal(bodyBytes, &Emps)
+	fmt.Printf("API Response as struct %+v\n", Emps)
 
 }
